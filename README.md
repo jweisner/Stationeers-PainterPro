@@ -22,6 +22,10 @@ must be installed on the server and on every client.
 
 ## Install
 
+Subscribe on the
+[Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3840045914),
+or install by hand:
+
 Requires [StationeersLaunchPad](https://github.com/StationeersLaunchPad/StationeersLaunchPad).
 
 Unzip the release into your Stationeers `mods/` directory so you end up with
