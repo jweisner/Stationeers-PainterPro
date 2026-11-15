@@ -33,6 +33,9 @@ Subscribe on the
 [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3840045914),
 or install by hand: unzip a release into your Stationeers `mods/` directory so
 you end up with `mods/PainterPro/PainterPro.dll` and `mods/PainterPro/About/`.
+Use one or the other, not both: if the Workshop copy and a copy in `mods/` are
+both enabled, the game fails to start, and with a LaunchPad mod pack active
+LaunchPad does not catch the duplicate for you.
 
 If you have NetworkPainter installed, remove it first. Both mods react to the
 same spray, and running them together paints each network twice with
