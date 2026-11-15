@@ -134,7 +134,10 @@ the repo.
 
 ## Identity
 
-ModID and GUID `net.jweisner.stationeers.PainterPro`. Published; do not change.
+ModID and GUID `net.pbmagnet.stationeers.PainterPro`, author Pb_Magnet (changed in
+1.1). Changing a published ModID is low-risk for this mod only because
+LaunchPad tracks Workshop mods by handle, it has no config file, and multiplayer
+matches on the name and version; do not change it again without rechecking that.
 
 ## Conventions
 

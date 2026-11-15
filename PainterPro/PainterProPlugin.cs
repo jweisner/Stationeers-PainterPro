@@ -9,9 +9,9 @@ namespace PainterPro
     [BepInPlugin(Guid, Name, Version)]
     public class PainterProPlugin : BaseUnityPlugin
     {
-        public const string Guid = "net.jweisner.stationeers.PainterPro";
+        public const string Guid = "net.pbmagnet.stationeers.PainterPro";
         public const string Name = "PainterPro";
-        public const string Version = "1.0";
+        public const string Version = "1.1";
 
         public static readonly Mod MOD = new Mod(Name, Version);
 
