@@ -6,7 +6,8 @@ work on it.
 
 ## Status (2026-11-14)
 
-- **1.0 released**: GitHub release `v1.0` and Steam Workshop item
+- **1.1 released** (metadata only: ModID and author): GitHub release `v1.1` and
+  Steam Workshop item
   [3840045914](https://steamcommunity.com/sharedfiles/filedetails/?id=3840045914) (public).
 - Tested: single player with Shift and Ctrl on pipes (including long pipes), cables
   (including long cables) and chutes; a remote client on a dedicated server with pipes.
