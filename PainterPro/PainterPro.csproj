@@ -50,7 +50,7 @@
 
   <Target Name="DeployLocalMod" AfterTargets="Build" Condition="'$(StationeersSaveDataDirectory)' != ''">
     <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(StationeersSaveDataDirectory)/mods/$(AssemblyName)" />
-    <Copy SourceFiles="About/About.xml;About/bepinex" DestinationFolder="$(StationeersSaveDataDirectory)/mods/$(AssemblyName)/About" />
+    <Copy SourceFiles="About/About.xml;About/bepinex;About/thumb.png;About/Preview.png" DestinationFolder="$(StationeersSaveDataDirectory)/mods/$(AssemblyName)/About" />
   </Target>
 
 </Project>
