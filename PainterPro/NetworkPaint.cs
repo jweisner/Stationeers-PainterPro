@@ -67,67 +67,102 @@ namespace PainterPro
             return t => t is Piping;
         }
 
-        // Checkered colours every second step outward from the sprayed item,
-        // counting steps along the network's own connections. A long pipe is
-        // one step however many cells it spans, and an unpainted device still
-        // counts as a step, so the pattern stays regular across both.
         private static int PaintStructures(INetworkedStructure start, List<INetworkedStructure> members, Func<Thing, bool> include, int colorIndex, bool checkered)
         {
-            int count = 0;
+            if (checkered)
+                return PaintCheckered(start, members, s => s.ConnectedStructures(), s => s.GetAsThing, include, colorIndex);
 
-            if (!checkered)
+            int count = 0;
+            foreach (var member in members)
+                if (member != start && TryPaint(member.GetAsThing, include, colorIndex))
+                    count++;
+            return count;
+        }
+
+        private static int PaintCables(Cable start, List<Cable> cables, int colorIndex, bool checkered)
+        {
+            if (checkered)
+                return PaintCheckered(start, cables, ConnectedCables, c => c, _ => true, colorIndex);
+
+            int count = 0;
+            foreach (var cable in cables)
+                if (cable != start && TryPaint(cable, _ => true, colorIndex))
+                    count++;
+            return count;
+        }
+
+        // Checkered colours every second step outward from the sprayed item,
+        // counting steps along the network's own connections. A long pipe or
+        // cable is one step however many cells it spans, and an unpainted
+        // device still counts as a step, so the pattern stays regular across
+        // both. Position parity cannot do this: a long piece has one position
+        // for all of its cells.
+        //
+        // A member the walk never reaches (joined to the rest only through
+        // something outside the member list) starts a walk of its own, seeded
+        // from its cell parity relative to the sprayed item. That is exact for
+        // single-cell pieces and the best available guess otherwise.
+        private static int PaintCheckered<T>(T start, List<T> members, Func<T, IEnumerable<T>> neighbours, Func<T, Thing> asThing, Func<Thing, bool> include, int colorIndex) where T : class
+        {
+            var inNetwork = new HashSet<T>(members);
+            var steps = new Dictionary<T, int>();
+            var frontier = new Queue<T>();
+            int count = 0;
+            var startThing = asThing(start);
+
+            void Walk(T root, int rootStep)
             {
-                foreach (var member in members)
-                    if (member != start && TryPaint(member.GetAsThing, include, colorIndex))
+                steps[root] = rootStep;
+                frontier.Enqueue(root);
+                while (frontier.Count > 0)
+                {
+                    var current = frontier.Dequeue();
+                    int step = steps[current];
+
+                    if (current != start && step % 2 == 0 && TryPaint(asThing(current), include, colorIndex))
                         count++;
-                return count;
+
+                    foreach (var next in neighbours(current) ?? Array.Empty<T>())
+                    {
+                        if (next == null || !inNetwork.Contains(next) || steps.ContainsKey(next))
+                            continue;
+                        steps[next] = step + 1;
+                        frontier.Enqueue(next);
+                    }
+                }
             }
 
-            var inNetwork = new HashSet<INetworkedStructure>(members);
-            var steps = new Dictionary<INetworkedStructure, int> { [start] = 0 };
-            var frontier = new Queue<INetworkedStructure>();
-            frontier.Enqueue(start);
-
-            while (frontier.Count > 0)
+            Walk(start, 0);
+            foreach (var member in members)
             {
-                var current = frontier.Dequeue();
-                int step = steps[current];
-
-                if (step > 0 && step % 2 == 0 && TryPaint(current.GetAsThing, include, colorIndex))
-                    count++;
-
-                foreach (var next in current.ConnectedStructures() ?? new List<INetworkedStructure>())
-                {
-                    if (next == null || !inNetwork.Contains(next) || steps.ContainsKey(next))
-                        continue;
-                    steps[next] = step + 1;
-                    frontier.Enqueue(next);
-                }
+                if (steps.ContainsKey(member))
+                    continue;
+                var thing = asThing(member);
+                if (thing != null && startThing != null)
+                    Walk(member, CellParity(thing) == CellParity(startThing) ? 0 : 1);
             }
 
             return count;
         }
 
-        // Cables expose no neighbour list, but every cable piece fills exactly
-        // one small-grid cell, and on a grid of single cells the step count
-        // between two pieces always has the same parity as the sum of their
-        // cell offsets. So checkered can be decided per cable from its cell.
-        private static int PaintCables(Cable start, List<Cable> cables, int colorIndex, bool checkered)
+        // Cables have no ConnectedStructures(). Find the cable in the cell
+        // each open end faces and keep it if it connects back to that end,
+        // which is how the game itself decides two pieces are joined.
+        private static IEnumerable<Cable> ConnectedCables(Cable cable)
         {
-            int count = 0;
-            int startParity = CellParity(start);
+            var grid = cable.GridController;
+            if (grid == null)
+                yield break;
 
-            foreach (var cable in cables)
+            foreach (var end in cable.OpenEnds)
             {
-                if (cable == start)
+                if (end == null)
                     continue;
-                if (checkered && CellParity(cable) != startParity)
-                    continue;
-                if (TryPaint(cable, _ => true, colorIndex))
-                    count++;
+                var cell = grid.GetSmallCell(grid.WorldToLocalGrid(end.Transform.position, SmallGrid.SmallGridSize, SmallGrid.SmallGridOffset));
+                var other = cell?.Cable;
+                if (other != null && other != cable && other.IsConnected(end))
+                    yield return other;
             }
-
-            return count;
         }
 
         // Small-grid cells are 0.5 units apart.
