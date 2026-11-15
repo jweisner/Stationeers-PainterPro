@@ -1,0 +1,7 @@
+<ModMetadata>
+  <Name>PainterPro</Name>
+  <ModID>net.jweisner.stationeers.PainterPro</ModID>
+  <Author>jweisner</Author>
+  <Version>1.0</Version>
+  <Description>Hold Shift while painting to colour an entire pipe, cable, chute, or robotic arm rail network at once. Ctrl paints a checkered/alternating pattern across the network, useful for marking a gas mix. Painting normally affects only the item you spray. Works in multiplayer. Inspired by NetworkPainter by Elmotrix.</Description>
+</ModMetadata>

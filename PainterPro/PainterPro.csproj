@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="../Stationeers.User.props" />
+  <Import Project="../Deploy.User.props" Condition="Exists('../Deploy.User.props')" />
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>PainterPro</AssemblyName>
+    <RootNamespace>PainterPro</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(StationeersDirectory)/BepInEx/core/BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(StationeersDirectory)/BepInEx/core/0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(StationeersDirectory)/rocketstation_Data/Managed/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(StationeersDirectory)/rocketstation_Data/Managed/UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(StationeersDirectory)/rocketstation_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(StationeersDirectory)/rocketstation_Data/Managed/UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="LaunchPadBooster">
+      <HintPath>$(StationeersDirectory)/BepInEx/plugins/StationeersLaunchPad/LaunchPadBooster.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="StationeersMods.Interface">
+      <HintPath>$(StationeersDirectory)/BepInEx/plugins/StationeersLaunchPad/StationeersMods.Interface.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="DeployLocalMod" AfterTargets="Build" Condition="'$(StationeersSaveDataDirectory)' != ''">
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(StationeersSaveDataDirectory)/mods/$(AssemblyName)" />
+    <Copy SourceFiles="About/About.xml" DestinationFolder="$(StationeersSaveDataDirectory)/mods/$(AssemblyName)/About" />
+  </Target>
+
+</Project>
